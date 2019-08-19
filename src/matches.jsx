@@ -4,7 +4,7 @@ import { List, Datagrid, Edit, Create, SimpleForm, DateField, NumberInput,
     DateInput, BooleanField, BooleanInput, ArrayInput, SimpleFormIterator, SelectArrayInput,
     CloneButton, TabbedForm, FormTab, SelectInput, DateTimeInput
  } from 'react-admin';
-import { backendUrl } from '../config'
+import { backendUrl } from './config'
 
  const styles = {
     inlineBlock: { display: 'inline-flex', marginRight: '1rem' },
