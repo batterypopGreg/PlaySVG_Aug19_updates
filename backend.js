@@ -23,7 +23,7 @@ app.use(cors({
 // DB Config
 const dbURL = process.env.MONGO_URL || 'mongodb://localhost:27017'
 const database = process.env.DATABASE || 'development'
-MongoClient.connect(dbURL, { useNewUrlParser: true }, (err, client) => {
+MongoClient.connect(dbURL, (err, client) => {
     if (err) return console.log(err)
     // Declare middleware here, attach to req obj
     app.use((req, res, next) => {
