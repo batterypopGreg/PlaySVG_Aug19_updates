@@ -1,6 +1,7 @@
 require('dotenv').config({
     debug: process.env.DEBUG
 })
+const path = require('path')
 const express = require("express")
 const { MongoClient, ObjectId } = require('mongodb')
 const bodyParser = require("body-parser")
@@ -26,7 +27,7 @@ MongoClient.connect(dbURL, { useNewUrlParser: true }, (err, client) => {
     if (err) return console.log(err)
     // Declare middleware here, attach to req obj
     app.use((req, res, next) => {
-        req.db = client.db(collection)
+        req.db = client.db(database)
         next()
     })
 
@@ -53,6 +54,13 @@ MongoClient.connect(dbURL, { useNewUrlParser: true }, (err, client) => {
     .get(readReaction)
     .put(updateReaction)
     .delete(deleteReaction)
+
+    // Static asset routes
+    app.use(express.static(path.join(__dirname, 'build')))
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname + '/build/index.html'))
+    })
 })
 
 app.listen(port, () => console.log(`Server up and running on port ${port} !`));
