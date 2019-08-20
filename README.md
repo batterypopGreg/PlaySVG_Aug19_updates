@@ -5,7 +5,7 @@
 Instructions assume `yarn` is available on local machine. Please either install globally or substitute `npx yarn`.
 
   * Install dependencies with `yarn install`
-  * Run frontend with `yarn start` or `npm run start`
+  * Run frontend with `yarn dev` or `npm run dev`
   * Run backend with  `yarn backend` or `npm run backend`
 
 ## Important Environment Variables
@@ -19,4 +19,12 @@ For ease of use/deployment locally and remotely, important attributes (MongoDB c
 
 ## Deployment Instructions
 
-TODO
+  * Add Heroku app as git remote
+  * Set appropriate env variables in Heroku app
+  * `git push heroku master`
+
+That should be it, hopefully.
+
+## TODOs
+  * Lock down match and reaction schema, write actual types and validation for it on server and client.
+  * Genuine auth, with sound, revokable tokens enforced server-side. 
