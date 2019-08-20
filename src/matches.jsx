@@ -106,11 +106,9 @@ export const MatchEdit = (props) => {
             </FormTab>
             <FormTab label="reactions">
             <ReferenceArrayInput
-                    label="Reaction"
+                    label="Reactions (from collection)"
                     source="reactions"
                     reference="reactions"
-                    // format={(v) => { console.warn('formatting', v); return v }}
-                    // parse={(v) => {console.warn('parsing', v); return v }}
                     format={(v) => { console.warn('formatting', v && v.map(parseReaction)); return v && v.map(parseReaction) }}
                     parse={(v) => {console.warn('parsing', v, v.map(vId => reactions[vId])); return v.map(vId => reactions[vId]) }}
                 >

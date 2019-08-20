@@ -3,9 +3,8 @@ import Typography from '@material-ui/core/Typography'
 import { List, Datagrid, Edit, Create, SimpleForm, DateField, NumberInput,
     TextField, EditButton, DisabledInput, SelectInput, TextInput, LongTextInput, 
     DateInput, BooleanField, BooleanInput, ArrayInput, SimpleFormIterator,
-    CloneButton, TabbedForm, FormTab
+    CloneButton, TabbedForm, FormTab, required
  } from 'react-admin';
- import { withStyles } from '@material-ui/core'
 
  const styles = {
     inlineBlock: { display: 'inline-flex', marginRight: '1rem' },
@@ -14,6 +13,12 @@ import { List, Datagrid, Edit, Create, SimpleForm, DateField, NumberInput,
 const SOURCE_TYPES = [
     { id: 'text', name: 'Text' },
     { id: 'image', name: 'Image' }
+]
+
+const RECIPIENTS = [
+    { id: 'kid', name: 'Kid' },
+    { id: 'pro', name: 'Pro' },
+    { id: 'challenge', name: 'Challenge' }
 ]
 
 export const ReactionList = (props) => (
@@ -55,8 +60,16 @@ export const ReactionEdit = (props) => (
     <Edit title={<ReactionTitle />} aside={<ReactionAside />} {...props}>
         <SimpleForm>
             <DisabledInput source="id" />
-            <TextInput source="identifier" />
-            <TextInput source="name"/>
+            <TextInput source="identifier" validate={required} />
+            <TextInput source="name" />
+            <TextInput source="unlock_trigger" />
+            <NumberInput source="time_to_live" step={1} />
+            <BooleanInput source="single_use" />
+            <NumberInput source="increment" />
+            <NumberInput source="adjustment" />
+            <NumberInput source="overheat_cooldown_rate" step={0.01} />
+            <NumberInput source="overheat_threshold" />
+            <SelectInput source="recipient" choices={RECIPIENTS} />
             <SelectInput source="source.type" choices={SOURCE_TYPES} />
             <TextInput source="source.value" />
         </SimpleForm>
@@ -70,7 +83,15 @@ export const ReactionCreate = (props) => {
         <SimpleForm defaultValue={defaultVals}>
             <DisabledInput source="id" />
             <TextInput source="identifier" />
-            <TextInput source="name"/>
+            <TextInput source="name" />
+            <TextInput source="unlock_trigger" />
+            <NumberInput source="time_to_live" step={1} />
+            <BooleanInput source="single_use" />
+            <NumberInput source="increment" />
+            <NumberInput source="adjustment" />
+            <NumberInput source="overheat_cooldown_rate" step={0.01} />
+            <NumberInput source="overheat_threshold" />
+            <SelectInput source="recipient" choices={RECIPIENTS} />
             <SelectInput source="source.type" choices={SOURCE_TYPES} />
             <TextInput source="source.value" />
         </SimpleForm>

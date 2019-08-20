@@ -29,6 +29,7 @@
     "node": "8.10.0"
   },
   "scripts": {
+    "dev": "react-scripts start",
     "start": "nodemon backend.js",
     "frontendstart": "react-scripts start",
     "build": "react-scripts build",
