@@ -67,10 +67,10 @@ export const MatchEdit = (props) => {
     }
 
     return (
-    <Edit title={<MatchTitle />} defaultValue={{reactionsIds: []}} {...props}>
+    <Edit title={<MatchTitle />} {...props}>
         <TabbedForm>
             <FormTab label="general">
-            <DisabledInput source="id" />
+            <TextField source="id" />
             <TextInput source="name" />
             <TextInput source="identifier" />
             <TextInput source="details" />
@@ -139,12 +139,11 @@ export const MatchEdit = (props) => {
 )};
 
 export const MatchCreate = (props) => {
-    const defaultVals = {id: Math.random() }
     return (
     <Create title="Create a Match" {...props}>
-        <TabbedForm defaultValue={defaultVals}>
+        <TabbedForm>
             <FormTab label="general">
-            <DisabledInput source="id" />
+            <TextField source="id" />
             <TextInput source="name" />
             <TextInput source="identifier" />
             <TextInput source="details" />

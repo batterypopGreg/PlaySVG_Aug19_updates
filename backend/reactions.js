@@ -20,7 +20,7 @@ const listReactions = async (req, res) => {
         res.header('X-Total-Count' , count);
         return res.status(200).json(matches)
     } catch(e) {
-        console.warn(e)
+        console.error(e)
         return res.status(500).json(e)
     }
 }
@@ -28,29 +28,28 @@ const listReactions = async (req, res) => {
 const readReaction = async (req, res) => {
     const { id } = req.params
     try {
-        const match = await req.db.collection('reactions').findOne({ '_id': ObjectId(id), archived: {'$ne': true } })
+        const match = await req.db.collection('reactions').findOne({ '_id': ObjectId(id) })
         reactionId(match)
         if (match) {
             return res.status(200).json(match)
         }
         return res.status(404).send()
     } catch(e) {
-        console.warn(e)
+        console.error(e)
         return res.status(500).json({error: e})
     }
 }
 
 const createReaction = async (req, res) => {
-    //console.warn(req.body)
-    const newReaction = req.body
     delete req.body.id
     delete req.body._id
     try {
         const result = await req.db.collection('reactions').insertOne(req.body)
-        reactionId(result)
-        return res.status(204).json(result)
+        const newReaction = await req.db.collection('reactions').findOne({ _id: ObjectId(result.insertedId) })
+        reactionId(newReaction)
+        return res.status(201).json(newReaction)
     } catch(e) {
-        console.warn(e)
+        console.error(e)
         return res.status(500).json(e)
     }
 }
@@ -73,18 +72,20 @@ const updateReaction = async (req, res) => {
 }
 
 const deleteReaction = async (req, res) => {
-    // Does not actually delete, merely sets "archived" flag
     const { id } = req.params
-    const query = { '_id': ObjectId(id), archived: {'$ne': true } }
+    const query = { '_id': ObjectId(id) }
     try {
         const match = await req.db.collection('reactions').findOne(query)
         if (match) {
-            const newVals = await req.db.collection('reactions').update(query, { '$set': { archived: true } })
-            console.warn(newVals)
-            return res.ok()
+            const result = await req.db.collection('reactions').removeOne(query)
+            if (result.result.ok) {
+                return res.status(204).send({})
+            }
+            return res.send(500)
         }
         return res.status(404).send()
     } catch(e) {
+        console.error(e)
         return res.status(500).json(e)
     }
 }

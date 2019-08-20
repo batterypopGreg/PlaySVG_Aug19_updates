@@ -3,7 +3,7 @@ import Typography from '@material-ui/core/Typography'
 import { List, Datagrid, Edit, Create, SimpleForm, DateField, NumberInput,
     TextField, EditButton, DisabledInput, SelectInput, TextInput, LongTextInput, 
     DateInput, BooleanField, BooleanInput, ArrayInput, SimpleFormIterator,
-    CloneButton, TabbedForm, FormTab, required
+    CloneButton
  } from 'react-admin';
 
  const styles = {
@@ -60,7 +60,7 @@ export const ReactionEdit = (props) => (
     <Edit title={<ReactionTitle />} aside={<ReactionAside />} {...props}>
         <SimpleForm>
             <DisabledInput source="id" />
-            <TextInput source="identifier" validate={required} />
+            <TextInput source="identifier" />
             <TextInput source="name" />
             <TextInput source="unlock_trigger" />
             <NumberInput source="time_to_live" step={1} />
@@ -77,10 +77,9 @@ export const ReactionEdit = (props) => (
 );
 
 export const ReactionCreate = (props) => {
-    const defaultVals = {id: Math.random() }
     return (
     <Create title="Create a Reaction" {...props}>
-        <SimpleForm defaultValue={defaultVals}>
+        <SimpleForm>
             <DisabledInput source="id" />
             <TextInput source="identifier" />
             <TextInput source="name" />
