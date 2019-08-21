@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { List, Datagrid, Edit, Create, SimpleForm, DateField, NumberInput,
     TextField, EditButton, DisabledInput, TextInput, ReferenceInput, ReferenceArrayInput, LongTextInput, 
     DateInput, BooleanField, BooleanInput, ArrayInput, SimpleFormIterator, SelectArrayInput,
-    CloneButton, TabbedForm, FormTab, SelectInput, DateTimeInput
+    CloneButton, TabbedForm, FormTab, SelectInput, DateTimeInput, FormDataConsumer
  } from 'react-admin';
 import { backendUrl } from './config'
+import { uniqBy } from 'lodash'
 
  const styles = {
     inlineBlock: { display: 'inline-flex', marginRight: '1rem' },
@@ -45,10 +46,10 @@ export const MatchEdit = (props) => {
                     r.id = r._id
                     r.count = 0
                     r.points = 0
-                    reactions[r._id] = r
+                    reactions[r.identifier] = r
                 })
                 setReactions(reactions)
-                console.warn('reactions', reactions)
+                // console.warn('reactions', reactions)
                 setStatus('done')
             } catch(e) {
                 setStatus(e)
@@ -59,7 +60,6 @@ export const MatchEdit = (props) => {
 
     function parseReaction(r) {
         const match = Object.values(reactions).find(otherReaction => r && r.identifier == otherReaction.identifier)
-        console.warn('match', r, match)
         if (match) {
             return match._id
         }
@@ -105,15 +105,54 @@ export const MatchEdit = (props) => {
             </ArrayInput>
             </FormTab>
             <FormTab label="reactions">
-            <ReferenceArrayInput
-                    label="Reactions (from collection)"
-                    source="reactions"
-                    reference="reactions"
-                    format={(v) => { console.warn('formatting', v && v.map(parseReaction)); return v && v.map(parseReaction) }}
-                    parse={(v) => {console.warn('parsing', v, v.map(vId => reactions[vId])); return v.map(vId => reactions[vId]) }}
+            <FormDataConsumer>
+                 {({ formData, ...rest }) => {
+                     //console.warn('reactions', reactions);
+                     // Extremely gnarly logic
+                     (formData.reactions || []).forEach(r => {
+                         if (r && r.identifier) {
+                            reactions[r.identifier] = {...(reactions[r.identifier] || {}), ...r}
+                         }
+                     })
+                     const reactionsById = {}
+                     Object.values(reactions).forEach(r => {
+                         if (r._id) {
+                            reactionsById[r._id] = r
+                         }
+                     })
+                     //console.warn('newReactions', reactions)
+                     return (
+                    <ReferenceArrayInput
+                        label="Reactions (from collection)"
+                        source="reactions"
+                        reference="reactions"
+                        // Format takes full reaction object and retrieves identifier used for lookup
+                        format={(v) => (v || []).map( v => {
+                            if (v && v.identifier) {
+                                const possibleReaction = reactions[v.identifier]
+                                //console.warn('formatting', v, v.id || possibleReaction && possibleReaction._id)
+    
+                                return v.id || possibleReaction && possibleReaction._id || v
+                            }
+                        })}
+                        // Parse takes ids (or whatever) from the controller and somehow puts back the full objects
+                        parse={(v) => {
+                            //console.warn('parsing', v, v.map(vId => reactions[vId]));
+                            return (v || []).map(vId => {
+                                // If is object, don't worry about it
+                                if (typeof vId === 'object') {
+                                    return vId
+                                }
+                                return reactionsById[vId]
+                            })
+                        }}
+                        {...rest}
                 >
                 <SelectArrayInput optionText="identifier" />
             </ReferenceArrayInput>
+                    )}
+                 }
+            </FormDataConsumer>
             <ArrayInput fullWidth source="reactions">
                 <SimpleFormIterator>
                     <TextInput source="identifier" />
@@ -139,6 +178,30 @@ export const MatchEdit = (props) => {
 )};
 
 export const MatchCreate = (props) => {
+    const [status, setStatus] = useState('new')
+    const [reactions, setReactions] = useState({})
+    useEffect(() => {
+        (async () => {
+        if (status === 'new') {
+            setStatus('loading')
+            try {
+                const res = await fetch(`${backendUrl}/reactions`)
+                const body = await res.json()
+                body.forEach(r => {
+                    r.id = r._id
+                    r.count = 0
+                    r.points = 0
+                    reactions[r.identifier] = r
+                })
+                setReactions(reactions)
+                // console.warn('reactions', reactions)
+                setStatus('done')
+            } catch(e) {
+                setStatus(e)
+            }
+        }
+    })()
+    })
     return (
     <Create title="Create a Match" {...props}>
         <TabbedForm>
@@ -178,9 +241,51 @@ export const MatchCreate = (props) => {
             </ArrayInput>
             </FormTab>
             <FormTab label="reactions">
-            <ReferenceArrayInput label="Reactions" source="reactions" reference="reactions">
-                <SelectInput optionText="identifier" />
+            <FormDataConsumer>
+                 {({ formData, ...rest }) => {
+                     // Extremely gnarly logic
+                     (formData.reactions || []).forEach(r => {
+                         if (r && r.identifier) {
+                            reactions[r.identifier] = {...(reactions[r.identifier] || {}), ...r}
+                         }
+                     })
+                     const reactionsById = {}
+                     Object.values(reactions).forEach(r => {
+                         if (r._id) {
+                            reactionsById[r._id] = r
+                         }
+                     })
+                     return (
+                    <ReferenceArrayInput
+                        label="Reactions (from collection)"
+                        source="reactions"
+                        reference="reactions"
+                        // Format takes full reaction object and retrieves identifier used for lookup
+                        format={(v) => (v || []).map( v => {
+                            if (v && v.identifier) {
+                                const possibleReaction = reactions[v.identifier]
+    
+                                return v.id || possibleReaction && possibleReaction._id || v
+                            }
+                        })}
+                        // Parse takes ids (or whatever) from the controller and somehow puts back the full objects
+                        parse={(v) => {
+                            // console.warn('parsing', v, v.map(vId => reactions[vId]));
+                            return (v || []).map(vId => {
+                                // If is object, don't worry about it
+                                if (typeof vId === 'object') {
+                                    return vId
+                                }
+                                return reactionsById[vId]
+                            })
+                        }}
+                        {...rest}
+                >
+                <SelectArrayInput optionText="identifier" />
             </ReferenceArrayInput>
+                    )}
+                 }
+            </FormDataConsumer>
             <ArrayInput fullWidth source="reactions">
                 <SimpleFormIterator>
                     <TextInput source="identifier" />
