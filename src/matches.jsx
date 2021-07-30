@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { List, Datagrid, Edit, Create, SimpleForm, DateField, NumberInput,
-    TextField, EditButton, DisabledInput, TextInput, ReferenceInput, ReferenceArrayInput, LongTextInput, 
+    TextField, EditButton, DisabledInput, TextInput,ImageField, ReferenceInput, ReferenceArrayInput, LongTextInput, 
     DateInput, BooleanField, BooleanInput, ArrayInput, SimpleFormIterator, SelectArrayInput,
     CloneButton, TabbedForm, FormTab, SelectInput, DateTimeInput, FormDataConsumer
  } from 'react-admin';
@@ -33,6 +33,7 @@ const MatchTitle = ({ record }) => {
 };
 
 export const MatchEdit = (props) => {
+    
     const [status, setStatus] = useState('new')
     const [reactions, setReactions] = useState({})
     useEffect(() => {
@@ -66,7 +67,9 @@ export const MatchEdit = (props) => {
         return null
     }
 
+   
     return (
+        
     <Edit title={<MatchTitle />} {...props}>
         <TabbedForm>
             <FormTab label="general">
@@ -96,7 +99,10 @@ export const MatchEdit = (props) => {
             <TextInput source="game_platform" />
             <ArrayInput fullWidth source="players">
                 <SimpleFormIterator>
-                    <TextInput source="avatar" />
+                    <TextInput source="avatar"
+                     />
+                    <TextInput source="name" />
+                 
                     <BooleanInput source="is_pro" />
                     <NumberInput source="score" />
                     <NumberInput source="score_adjustment" />
