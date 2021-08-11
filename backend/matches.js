@@ -50,7 +50,7 @@ const listMatches = async (req, res) => {
     
 }
 
-var host = 'ws://'+location.hostname+':8000';
+var host      =   process.env.BACKEND_WEBSOCKET_URL||'ws://localhost:8000';
 const client  = new W3CWebSocket (host);
 
 const readMatch = async (req, res) => {
