@@ -7,6 +7,8 @@ import { MatchList, MatchEdit, MatchCreate } from './matches'
 import { ReactionList, ReactionEdit, ReactionCreate } from './reactions'
 import { backendUrl } from './config'
 
+console.info(`backendUrl`, backendUrl)
+
 const dataProvider = jsonServerProvider(backendUrl)
 
 const App: React.FC = () => (

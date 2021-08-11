@@ -22,15 +22,22 @@ function parseMatch(match) {
 
 const listMatches = async (req, res) => {
     const { start, end, order, sort } = parseAdminProps(req.query)
+   
+    console.info(`list matches`, req.db.databaseName, start, end, order, sort)
 
-    
-    
+    req.db.listCollections()
+            .toArray()
+	    .then(cols => console.info("Collections", cols))
+            .catch(err => console.error("err", err))
+
     try {
         const matches = await req.db.collection('matches').find()
             .skip(start)
             .limit(end - start)
             .sort({ [sort] : order })
             .toArray()
+
+	//console.info(`mtches`, matches)
         matches.forEach(matchId)
         const count = await req.db.collection('matches').countDocuments()
         res.header('X-Total-Count' , count);
@@ -42,7 +49,9 @@ const listMatches = async (req, res) => {
 
     
 }
-const client  = new W3CWebSocket ('ws://localhost:8000');
+
+var host = 'ws://'+location.hostname+':8000';
+const client  = new W3CWebSocket (host);
 
 const readMatch = async (req, res) => {
     const { id } = req.params
