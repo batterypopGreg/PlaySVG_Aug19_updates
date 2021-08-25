@@ -11,7 +11,7 @@ const { login } = require('./backend/auth')
 const { listReactions, createReaction, readReaction, updateReaction, deleteReaction } = require('./backend/reactions')
 const { listMatches, createMatch, readMatch, updateMatch, deleteMatch } = require('./backend/matches')
 
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 5001
 const app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }))
