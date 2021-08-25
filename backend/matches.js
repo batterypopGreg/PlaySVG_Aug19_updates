@@ -51,6 +51,7 @@ const listMatches = async (req, res) => {
 }
 
 var host      =   process.env.BACKEND_WEBSOCKET_URL||'ws://localhost:8000';
+console.info(`matches.js::ws host::`, host); 
 const client  = new W3CWebSocket (host);
 
 const readMatch = async (req, res) => {
@@ -96,9 +97,10 @@ const updateMatch = async (req, res) => {
         const updated = await req.db.collection('matches').updateOne(query, { '$set': match })
         const result = await req.db.collection('matches').findOne(query)
         result.id = result._id
-
-        client.send(JSON.stringify({ type: 'match_update', data: match}));
-
+	const socketData = JSON.stringify({ type: 'match_update', data: match})
+	console.info(`sending data to socket`, socketData);
+        const rv = client.send(JSON.stringify({ type: 'match_update', data: match}));
+	console.info(`socket response`, rv);
         return res.status(200).json(result)
     } catch(e) {
         console.error(e)
