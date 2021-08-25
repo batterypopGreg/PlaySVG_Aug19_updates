@@ -11,7 +11,7 @@ const { login } = require('./backend/auth')
 const { listReactions, createReaction, readReaction, updateReaction, deleteReaction } = require('./backend/reactions')
 const { listMatches, createMatch, readMatch, updateMatch, deleteMatch } = require('./backend/matches')
 
-const port = process.env.PORT || 3001
+const port = 3001
 const app = express()
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -22,7 +22,7 @@ app.use(cors({
 
 // DB Config
 const dbURL = process.env.MONGO_URL || 'mongodb://localhost:27017'
-const database = process.env.DATABASE || 'development'
+const database = process.env.DATABASE || 'my-db'
 MongoClient.connect(dbURL, (err, client) => {
     if (err) return console.log(err)
     // Declare middleware here, attach to req obj
@@ -30,6 +30,8 @@ MongoClient.connect(dbURL, (err, client) => {
         req.db = client.db(database)
         next()
     })
+
+    console.info(`connected to db`)
 
     // Auth routes
     app.route('/auth')

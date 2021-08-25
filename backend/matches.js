@@ -1,6 +1,7 @@
 
 const { ObjectId } = require('mongodb')
 const { parseAdminProps } = require('./util')
+const W3CWebSocket = require('ws');
 
 function matchId(match) {
     match.id = match._id
@@ -21,13 +22,22 @@ function parseMatch(match) {
 
 const listMatches = async (req, res) => {
     const { start, end, order, sort } = parseAdminProps(req.query)
-    
+   
+    console.info(`list matches`, req.db.databaseName, start, end, order, sort)
+
+    req.db.listCollections()
+            .toArray()
+	    .then(cols => console.info("Collections", cols))
+            .catch(err => console.error("err", err))
+
     try {
         const matches = await req.db.collection('matches').find()
             .skip(start)
             .limit(end - start)
             .sort({ [sort] : order })
             .toArray()
+
+	//console.info(`mtches`, matches)
         matches.forEach(matchId)
         const count = await req.db.collection('matches').countDocuments()
         res.header('X-Total-Count' , count);
@@ -36,15 +46,23 @@ const listMatches = async (req, res) => {
         console.error(e)
         return res.status(500).json(e)
     }
+
+    
 }
+
+var host      =   process.env.BACKEND_WEBSOCKET_URL||'ws://localhost:8000';
+const client  = new W3CWebSocket (host);
 
 const readMatch = async (req, res) => {
     const { id } = req.params
+    
+   
     try {
         const match = await req.db.collection('matches').findOne({ '_id': ObjectId(id) })
         matchId(match)
         if (match) {
-            return res.status(200).json(match)
+            
+         return res.status(200).json(match)
         }
         return res.status(404).send()
     } catch(e) {
@@ -78,6 +96,9 @@ const updateMatch = async (req, res) => {
         const updated = await req.db.collection('matches').updateOne(query, { '$set': match })
         const result = await req.db.collection('matches').findOne(query)
         result.id = result._id
+
+        client.send(JSON.stringify({ type: 'match_update', data: match}));
+
         return res.status(200).json(result)
     } catch(e) {
         console.error(e)

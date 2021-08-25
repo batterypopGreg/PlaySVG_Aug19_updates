@@ -6,12 +6,14 @@ const USERNAME = 'admin'
 const PASSWORD = 'HDK39PL8'
 const TOKEN = 'cb c2 12 b6 21 59 44 06 7d 6c'
 
+console.info(`auth import`)
+
 const login = async (req, res) => {
     const { username, password } = req.body
     if (username === USERNAME && password === PASSWORD) {
         return res.status(200).json({ token: TOKEN })
     } else {
-        return res.status(400).send('invalid')
+        return res.status(400).send('invalid username or pass')
     }
 }
 

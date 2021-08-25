@@ -1,15 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { List, Datagrid, Edit, Create, SimpleForm, DateField, NumberInput,
-    TextField, EditButton, DisabledInput, TextInput, ReferenceInput, ReferenceArrayInput, LongTextInput, 
+    TextField, EditButton, DisabledInput, TextInput,ImageField, ReferenceInput, ReferenceArrayInput, LongTextInput, 
     DateInput, BooleanField, BooleanInput, ArrayInput, SimpleFormIterator, SelectArrayInput,
     CloneButton, TabbedForm, FormTab, SelectInput, DateTimeInput, FormDataConsumer
  } from 'react-admin';
 import { backendUrl } from './config'
 import { uniqBy } from 'lodash'
+import {
+    required,
+    minLength,
+    maxLength,
+    minValue,
+    maxValue,
+    number,
+    regex,
+    
+} from 'react-admin';
 
  const styles = {
     inlineBlock: { display: 'inline-flex', marginRight: '1rem' },
 };
+
+const validateNumber = [number(),maxValue(20)];
 
 export const MatchList = (props) => (
     <List {...props}>
@@ -32,10 +44,28 @@ const MatchTitle = ({ record }) => {
     return <span>Match {record ? `"${record.name}"` : ''}</span>;
 };
 
+const PlayerAvatar = ({ record ,props }) => {
+     
+     return <img class="player-avatar" style={{ borderRadius:STYLE.imgcss.borderRadius}}   src={record.avatar} width="150" height="150"/>
+    
+}
+
+
+const STYLE = {
+    imgcss : {
+      borderRadius: '50%',
+    },
+  };
+
 export const MatchEdit = (props) => {
+    
     const [status, setStatus] = useState('new')
     const [reactions, setReactions] = useState({})
+
+    
     useEffect(() => {
+
+
         (async () => {
         if (status === 'new') {
             setStatus('loading')
@@ -43,6 +73,7 @@ export const MatchEdit = (props) => {
                 const res = await fetch(`${backendUrl}/reactions`)
                 const body = await res.json()
                 body.forEach(r => {
+                   
                     r.id = r._id
                     r.count = 0
                     r.points = 0
@@ -58,6 +89,14 @@ export const MatchEdit = (props) => {
     })()
     })
 
+    const Preview = (s) => {
+        console.log(s.record.avatar);
+        
+        return <img class="player-avatar"    src={s.record.avatar} width="150" height="150"/>
+       
+    }
+
+      
     function parseReaction(r) {
         const match = Object.values(reactions).find(otherReaction => r && r.identifier == otherReaction.identifier)
         if (match) {
@@ -66,8 +105,32 @@ export const MatchEdit = (props) => {
         return null
     }
 
+
+    const [{alt, src}, setImg] = useState({
+        src: 'placeholder',
+        alt: ''
+     });
+
+    
+    const handleImg = ( record ,e) => {
+       // console.log(e.target.value);
+       
+        if(e.target.value) {
+            //record.avatar =  e.target.value
+            setImg({
+                src: e.target.value,
+                alt: e.target.value
+            });    
+        }   
+    }
+
+    
+
+   
     return (
+        
     <Edit title={<MatchTitle />} {...props}>
+        
         <TabbedForm>
             <FormTab label="general">
             <TextField source="id" />
@@ -97,6 +160,10 @@ export const MatchEdit = (props) => {
             <ArrayInput fullWidth source="players">
                 <SimpleFormIterator>
                     <TextInput source="avatar" />
+                     
+                    <PlayerAvatar source="avatar" />
+                    <TextInput source="name" />
+                    
                     <BooleanInput source="is_pro" />
                     <NumberInput source="score" />
                     <NumberInput source="score_adjustment" />
@@ -163,8 +230,12 @@ export const MatchEdit = (props) => {
                     <NumberInput source="time_to_live" />
                     <BooleanInput source="single_use" />
                     <NumberInput source="increment" />
-                    <NumberInput source="adjustment" />
-                    <NumberInput source="overheat_cooldown_rate" />
+                    {/* <NumberInput source="adjustment" />
+                    <NumberInput source="overheat_cooldown_rate" /> */}
+
+                    <TextInput source="adjustment"  validate={validateNumber}/>
+                    <TextInput source="overheat_cooldown_rate"  validate={validateNumber}/>
+                    
                     <NumberInput source="overheat_threshold" />
                     <TextInput source="recipient" />
                     <TextInput source="source.type" />
