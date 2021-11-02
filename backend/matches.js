@@ -50,7 +50,7 @@ const listMatches = async (req, res) => {
     
 }
 
-var host      =   process.env.BACKEND_WEBSOCKET_URL||'wss://localhost:5000';
+var host      =   process.env.BACKEND_WEBSOCKET_URL||'wss://dev-okgamer.batterypop.net:5000';
 
 
 console.info(`matches.js::ws host::`, host); 
