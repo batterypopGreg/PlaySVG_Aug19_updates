@@ -55,7 +55,7 @@ var host      =   process.env.BACKEND_WEBSOCKET_URL||'wss://dev-okgamer.batteryp
 
 
 console.info(`matches.js::ws host::`, host); 
-
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 //const client     = new W3CWebSocket (host);
  const wsclient    =  new  WebSocket(host);
  wsclient.onopen = function(e) {
