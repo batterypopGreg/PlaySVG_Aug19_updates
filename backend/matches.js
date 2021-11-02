@@ -55,7 +55,13 @@ var host      =   process.env.BACKEND_WEBSOCKET_URL||'wss://dev-okgamer.batteryp
 
 console.info(`matches.js::ws host::`, host); 
 
-//const client  = new W3CWebSocket (host);
+//const client     = new W3CWebSocket (host);
+ const wsclient    =  new  WebSocket(host);
+ wsclient.onopen = function(e) {
+    console.log(" Connection established");
+    
+  };
+  
 
 const readMatch = async (req, res) => {
     const { id } = req.params
@@ -103,7 +109,8 @@ const updateMatch = async (req, res) => {
 	const socketData = JSON.stringify({ type: 'match_update', data: match})
 	console.info(`sending data to socket`, socketData);
       //  const rv = client.send(JSON.stringify({ type: 'match_update', data: match}));
-	//console.info(`socket response`, rv);
+        const rv = wsclient.send(JSON.stringify({ type: 'match_update', data: match}));
+	    console.info(`socket response`, rv);
         return res.status(200).json(result)
     } catch(e) {
         console.error(e)
