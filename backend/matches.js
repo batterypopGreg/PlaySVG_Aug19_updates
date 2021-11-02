@@ -2,6 +2,7 @@
 const { ObjectId } = require('mongodb')
 const { parseAdminProps } = require('./util')
 const W3CWebSocket = require('ws');
+const WebSocket = require('ws');
 
 function matchId(match) {
     match.id = match._id
