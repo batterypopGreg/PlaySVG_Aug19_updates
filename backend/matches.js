@@ -50,8 +50,11 @@ const listMatches = async (req, res) => {
     
 }
 
-var host      =   process.env.BACKEND_WEBSOCKET_URL||'ws://localhost:8000';
+var host      =   process.env.BACKEND_WEBSOCKET_URL||'wss://localhost:5000';
+
+
 console.info(`matches.js::ws host::`, host); 
+
 const client  = new W3CWebSocket (host);
 
 const readMatch = async (req, res) => {
