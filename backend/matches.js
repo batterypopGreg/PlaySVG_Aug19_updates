@@ -51,11 +51,13 @@ const listMatches = async (req, res) => {
     
 }
 
-var host      =   process.env.BACKEND_WEBSOCKET_URL||'wss://dev-okgamer.batterypop.net:5000';
+var host      =   process.env.BACKEND_WEBSOCKET_URL||'wss://dev-okgamer.batterypop.net';
 
 
 console.info(`matches.js::ws host::`, host); 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";// Avoids DEPTH_ZERO_SELF_SIGNED_CERT error for self-signed certs
+
 //const client     = new W3CWebSocket (host);
  const wsclient    =  new  WebSocket(host);
  wsclient.onopen = function(e) {
@@ -107,8 +109,8 @@ const updateMatch = async (req, res) => {
         const updated = await req.db.collection('matches').updateOne(query, { '$set': match })
         const result = await req.db.collection('matches').findOne(query)
         result.id = result._id
-	const socketData = JSON.stringify({ type: 'match_update', data: match})
-	console.info(`sending data to socket`, socketData);
+	    const socketData = JSON.stringify({ type: 'match_update', data: match})
+    	console.info(`sending data to socket`, socketData);
       //  const rv = client.send(JSON.stringify({ type: 'match_update', data: match}));
         const rv = wsclient.send(JSON.stringify({ type: 'match_update', data: match}));
 	    console.info(`socket response`, rv);
