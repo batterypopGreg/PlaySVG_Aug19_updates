@@ -59,11 +59,11 @@ console.info(`matches.js::ws host::`, host);
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";// Avoids DEPTH_ZERO_SELF_SIGNED_CERT error for self-signed certs
 
 //const client     = new W3CWebSocket (host);
-//  const wsclient    =  new  WebSocket(host);
-//  wsclient.onopen = function(e) {
-//     console.log(" Connection established");
+ const wsclient    =  new  WebSocket(host);
+ wsclient.onopen = function(e) {
+    console.log(" Connection established");
     
-//   };
+  };
   
 
 const readMatch = async (req, res) => {
@@ -101,11 +101,11 @@ const createMatch = async (req, res) => {
 
 const updateMatch = async (req, res) => {
 
-    const wsclient    =  new  WebSocket(host);
-    wsclient.onopen = function(e) {
-       console.log(" Connection established");
+    // const wsclient    =  new  WebSocket(host);
+    // wsclient.onopen = function(e) {
+    //    console.log(" Connection established");
        
-     };
+    //  };
     
 
 
