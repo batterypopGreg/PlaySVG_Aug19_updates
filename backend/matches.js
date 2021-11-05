@@ -51,16 +51,17 @@ const listMatches = async (req, res) => {
     
 }
 
-// var host      =   process.env.BACKEND_WEBSOCKET_URL||'wss://dev-okgamer.batterypop.net';
-// console.info(`matches.js::ws host::`, host); 
-// process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";// Avoids DEPTH_ZERO_SELF_SIGNED_CERT error for self-signed certs
+var host      =   process.env.BACKEND_WEBSOCKET_URL||'wss://dev-okgamer.batterypop.net';
+console.info(`matches.js::ws host::`, host); 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";// Avoids DEPTH_ZERO_SELF_SIGNED_CERT error for self-signed certs
 
 //const client     = new W3CWebSocket (host);
-//  const wsclient    =  new  WebSocket(host);
-//  wsclient.onopen = function(e) {
-//     console.log(" Connection established");
+ //const wsclient    =  new  WebSocket(host);
+ const wsclient    =  new  W3CWebSocket(host);
+ wsclient.onopen = function(e) {
+    console.log(" Connection established");
     
-//   };
+  };
   
 
 const readMatch = async (req, res) => {
@@ -99,15 +100,15 @@ const createMatch = async (req, res) => {
 const updateMatch = async (req, res) => {
 
 
-    var host      =   process.env.BACKEND_WEBSOCKET_URL||'wss://dev-okgamer.batterypop.net';
-    console.info(`matches.js::ws host::`, host); 
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";// Avoids DEPTH_ZERO_SELF_SIGNED_CERT error for self-signed certs
+    // var host      =   process.env.BACKEND_WEBSOCKET_URL||'wss://dev-okgamer.batterypop.net';
+    // console.info(`matches.js::ws host::`, host); 
+    // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";// Avoids DEPTH_ZERO_SELF_SIGNED_CERT error for self-signed certs
     
-    const wsclient    =  new  WebSocket(host);
-    wsclient.onopen = function(e) {
-       console.log(" Connection established");
+    // const wsclient    =  new  WebSocket(host);
+    // wsclient.onopen = function(e) {
+    //    console.log(" Connection established");
        
-     };
+    //  };
     
 
 
